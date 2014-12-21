@@ -1,0 +1,63 @@
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       c if sel == 010
+ *       d if sel == 011
+ *       e if sel == 100
+ *       f if sel == 101
+ *       g if sel == 110
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way {
+    IN a, b, c, d, e, f, g, h, sel[3];
+    OUT out;
+
+    PARTS:
+    Not(in=sel[0], out=notselzero);
+    Not(in=sel[1], out=notselone);
+    Not(in=sel[2], out=notseltwo);
+    
+    And(a=a, b=notselzero, out=temp1);
+    And(a=temp1, b=notselone, out=temp2);
+    And(a=temp2, b=notseltwo, out=candidate1);
+    
+    And(a=b, b=sel[0], out=temp3);
+    And(a=temp3, b=notselone, out=temp4);
+    And(a=temp4, b=notseltwo, out=candidate2);
+
+    And(a=c, b=notselzero, out=temp5);
+    And(a=temp5, b=sel[1], out=temp6);
+    And(a=temp6, b=notseltwo, out=candidate3);
+
+    And(a=d, b=sel[0], out=temp7);
+    And(a=temp7, b=sel[1], out=temp8);
+    And(a=temp8, b=notseltwo, out=candidate4);
+
+    And(a=e, b=notselzero, out=temp9);
+    And(a=temp9, b=notselone, out=temp10);
+    And(a=temp10, b=sel[2], out=candidate5);
+
+    And(a=f, b=sel[0], out=temp11);
+    And(a=temp11, b=notselone, out=temp12);
+    And(a=temp12, b=sel[2], out=candidate6);
+
+    And(a=g, b=notselzero, out=temp13);
+    And(a=temp13, b=sel[1], out=temp14);
+    And(a=temp14, b=sel[2], out=candidate7);
+
+    And(a=h, b=sel[0], out=temp15);
+    And(a=temp15, b=sel[1], out=temp16);
+    And(a=temp16, b=sel[2], out=candidate8);
+
+    Or(a=candidate1, b=candidate2, out=firstOr);
+    Or(a=firstOr, b=candidate3, out=secondOr);
+    Or(a=secondOr, b=candidate4, out=thirdOr);
+    Or(a=thirdOr, b=candidate5, out=fourthOr);
+    Or(a=fourthOr, b=candidate6, out=fifthOr);
+    Or(a=fifthOr, b=candidate7, out=sixthOr);
+    Or(a=sixthOr, b=candidate8, out=out);
+}
+
+    
