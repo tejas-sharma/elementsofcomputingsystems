@@ -1,0 +1,7 @@
+CHIP Zero {
+    IN in[15];
+    OUT out[15];
+
+    PARTS:
+    And16(a=in, b=false, out=out);
+}
