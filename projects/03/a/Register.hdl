@@ -14,5 +14,6 @@ CHIP Register {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    HalfRegister(in=in[0..7], out=out[0..7], load=load);
+    HalfRegister(in=in[8..15], out=out[8..15], load=load);
 }
