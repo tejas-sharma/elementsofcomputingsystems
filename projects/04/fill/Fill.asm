@@ -11,10 +11,6 @@
 // Put your code here.
 
 
-// Start: 16384 
-// End: 147456
-// Every row has 512 bits
-
 // 1 - black
 // 0 - white
 
@@ -31,6 +27,30 @@
 
 // @R3: Remaining bits in row
 
+@R1
+M=0
+@R4
+M=0
+@SCREEN
+D=A
+@R2
+M=D
+@512
+D=A
+@R3
+M=D
+
+@DISPATCHER
+0;JEQ
+
+(DISPATCHER)
+@READBIT
+0;JEQ
+(POSTREADBIT)
+@CHECKNEEDRESET
+0;JEQ
+
+
 // Reads a bit into current op register
 (READBIT)
 @24576
@@ -39,9 +59,17 @@ D=M
 D;JEQ
 @R1
 M=1
+@POSTREADBIT
+0;JEQ
 (SETWHITE)
 @R1
 M=0
+@POSTREADBIT
+0;JEQ
+
+(POSTCHECKNEEDRESET)
+@PERFORMOP
+0;JEQ
 
 // Checks to see if we will overflow 
 (CHECKNEEDRESET)
@@ -49,28 +77,60 @@ M=0
 D=M
 @R4
 D=D-M
-@RESETWORKINGBIT
-D;JEQ
-@R2
-D=M-147456
-@RESETWORKINGBIT
-D;JLT
-
-// Reset the working bit
-(RESETWORKINGBIT)
-@R2
-M=16384
-@R3
-M=512
+@R5
+M=D
 @R1
 D=M
 @R4
 M=D
+@R5
+D=M
+@RESETWORKINGBIT
+D;JNE
+@8192
+D=A
+@R2
+D=M-D
+@RESETWORKINGBIT
+D;JLT
+@POSTCHECKNEEDRESET
+0;JEQ
+
+// Reset the working bit
+(RESETWORKINGBIT)
+@SCREEN
+D=A
+@R2
+M=D
+@512
+D=A
+@R3
+M=D
+@POSTCHECKNEEDRESET
+0;JEQ
+
 
 (PERFORMOP)
 @R1
 D=M
 @WHITEN
 D;JEQ
-
+@R2
+A=M
+M=-1
+@R2
+M=M+1
+@DISPATCHER
+0;JEQ
 (WHITEN)
+@0
+D=A
+@R2
+A=M
+M=D
+@R2
+M=M+1
+@R3
+M=M-1
+@DISPATCHER
+0;JEQ
